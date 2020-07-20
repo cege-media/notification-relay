@@ -1,15 +1,15 @@
 {
-	"pureCloud": {
-		"environment": "",
-		"clientId": "",
-		"clientSecret": ""
-	},
-	"settings": {
-		"logLevel": "debug",
-		"enableSdkDebugging": false
-	},
-	"integrations": [
-		{ "$ref": "./config/example-console/config.json" },
-		{ "$ref": "./config/example-web/config-websockets.json" }
-	]
+  "pureCloud": {
+    "environment": "mypurecloud.com",
+    "clientId": "e92cdf40-a922-4bdd-acdd-ed633d467924",
+    "clientSecret": "QLDIIh29Ch1nixjgMV7SaaqTPQfXn-9d2FQ1hY1CRj8"
+  },
+  "settings": {
+    "logLevel": "debug",
+    "enableSdkDebugging": false
+  },
+  "integrations": [
+    { "$ref": "./config/example-console/config.json" },
+    { "$ref": "./config/example-web/config-websockets.json" }
+  ]
 }
