@@ -1,0 +1,10 @@
+{
+  "name": "Integration - Queue Console",
+  "logTopic": "Queues",
+  "modulePath": "./config/queues/integration.js",
+  "subscriptions": {
+    "v2.routing.queues.{id}.conversations": { "$ref": "#/queues" }
+  },
+  "queues": ["184cfb67-3cee-4411-b580-531165d14f49"],
+  "rootUriMatch": "/v2\\.routing.queues\\.([0-9a-f\\-]{36})\\../i"
+}
