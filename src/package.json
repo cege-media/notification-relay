@@ -25,6 +25,7 @@
   },
   "homepage": "https://github.com/MyPureCloud/notification-relay#readme",
   "dependencies": {
+    "axios": "^0.19.2",
     "dot": "^1.1.2",
     "express": "^4.15.4",
     "fs-extra": "^3.0.1",

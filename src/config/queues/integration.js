@@ -6,14 +6,17 @@
 // Import node modules
 const _ = require("lodash");
 
+const axios = require("axios");
+
 // Import the def module used in the templates
 const defs = require("./defs");
-const integrationConfig = require("./config");
+
+const rootChannelPath = /v2\.routing\.queues\.([0-9a-f\-]{36})\./;
 
 const CHANNEL_METADATA_TOPIC = "channel.metadata";
 
 const notificationFunctions = {
-  conversation: conversationCallback,
+  conversations: conversationCallback,
 };
 
 // Set instance variables
@@ -133,9 +136,7 @@ function onNotification(topic, data) {
     }
 
     // Get the function that we will call
-    const functionName = topic
-      .replace(integrationConfig.rootUriMatch, "")
-      .replace(/\./, "_");
+    const functionName = topic.replace(rootChannelPath, "").replace(/\./, "_");
 
     const success = notificationFunctions?.[functionName]?.(topic, data);
 
@@ -227,7 +228,27 @@ function onNotification(topic, data) {
 }
 
 function conversationCallback(topic, data) {
-  _this.log.debug({ topic, data });
+  // TODO: URL NEEDS TO BE BASED ON CONFIG THAT SHOULD BE SET IN A .env FILE
+  axios
+    .post(
+      "https://notifications-dev.hivehq.co/v1/handler",
+      JSON.stringify({
+        type: "conversations",
+        typeId: data.eventBody.id,
+        message: data,
+      })
+    )
+    .then((response) => {
+      // do something here?
+      _this.log.info({ responseData: response.data });
+    })
+    .catch((err) => {
+      // We errored out...
+      console.log({
+        FUNCTION: "Integration::conversationCallback",
+        ERROR: err,
+      });
+    });
   return true;
 }
 

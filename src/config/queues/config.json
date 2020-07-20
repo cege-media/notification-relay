@@ -5,6 +5,5 @@
   "subscriptions": {
     "v2.routing.queues.{id}.conversations": { "$ref": "#/queues" }
   },
-  "queues": ["184cfb67-3cee-4411-b580-531165d14f49"],
-  "rootUriMatch": "/v2\\.routing.queues\\.([0-9a-f\\-]{36})\\../i"
+  "queues": ["b60868bf-5f66-4119-8def-2883f93448ce"]
 }
