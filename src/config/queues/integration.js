@@ -6,14 +6,17 @@
 // Import node modules
 const _ = require("lodash");
 
+const axios = require("axios");
+
 // Import the def module used in the templates
 const defs = require("./defs");
-const integrationConfig = require("./config");
+
+const rootChannelPath = /v2\.routing\.queues\.([0-9a-f\-]{36})\./;
 
 const CHANNEL_METADATA_TOPIC = "channel.metadata";
 
 const notificationFunctions = {
-  conversation: conversationCallback,
+  conversations: conversationCallback,
 };
 
 // Set instance variables
@@ -58,48 +61,6 @@ function Integration(serviceProvder) {
 
 module.exports = Integration;
 
-/**
- * Gets a user object by ID from the default cache
- * @param  {string/guid}	id 	The ID of the user to get
- * @return {object/user}			The user object
- */
-function getUser(id) {
-  if (!id) return;
-  if (id.length != 36) {
-    _this.log.warn(`getUser: ID ${id} is not a GUID!`);
-    return;
-  }
-
-  var user = _this.defaultCache.get("users")[id];
-  if (!user) _this.log.warn(`getUser: No user in cache for ID ${id}`);
-
-  return user;
-}
-
-/**
- * Gets a presence object by ID from the default cache
- * @param  {string/guid}			id 	The ID of the presence to get
- * @return {object/presence}			The presence object
- */
-function getPresence(id) {
-  if (!id) return;
-  if (id.length != 36) {
-    _this.log.warn(`getPresence: ID ${id} is not a GUID!`);
-    return;
-  }
-
-  var presence = _this.defaultCache.get("presences")[id];
-  if (!presence) {
-    _this.log.warn(`getPresence: No presence in cache for ID ${id}`);
-    return;
-  }
-
-  // Set label
-  presence.label = presence.languageLabels["en_US"];
-
-  return presence;
-}
-
 // Event callbacks
 
 function onInitialized(topic, data) {
@@ -133,93 +94,13 @@ function onNotification(topic, data) {
     }
 
     // Get the function that we will call
-    const functionName = topic
-      .replace(integrationConfig.rootUriMatch, "")
-      .replace(/\./, "_");
+    const functionName = topic.replace(rootChannelPath, "").replace(/\./, "_");
 
     const success = notificationFunctions?.[functionName]?.(topic, data);
 
     if (!success) {
       _this.log.warn(`Unmatched notification topic: ${topic}`);
     }
-
-    // // Presence
-    // const presenceMatch = topic.match(
-    //   /v2\.routing.queues\.([0-9a-f\-]{36})\.presence/i
-    // );
-
-    // if (presenceMatch) {
-    //   // Add extra data to event
-    //   data.eventBody.user = getUser(presenceMatch[1]);
-    //   data.eventBody.presence = getPresence(
-    //     data.eventBody.presenceDefinition.id
-    //   );
-
-    //   // Execute template
-    //   var presenceMessage = _this.templateService.executeTemplate(
-    //     "{{# def.now() }} - User {{= it.user.name }} ({{= it.user.id }}) is now {{= it.presence.label }} ({{= it.presence.systemPresence }}) ({{= it.presenceDefinition.id }})",
-    //     data.eventBody,
-    //     defs
-    //   );
-
-    //   // Success?
-    //   if (presenceMessage) _this.log.info(presenceMessage);
-    //   else _this.log.warn("Template execution failed! No message returned.");
-    //   return;
-    // }
-
-    // // RoutingStatus
-    // var routingStatusMatch = topic.match(
-    //   /v2\.users\.([0-9a-f\-]{36})\.routingStatus/i
-    // );
-    // if (routingStatusMatch) {
-    //   // Add extra data to event
-    //   data.eventBody.user = getUser(routingStatusMatch[1]);
-
-    //   // Execute template
-    //   var routingMessage = _this.templateService.executeTemplate(
-    //     "{{# def.now() }} - User {{= it.user.name }} ({{= it.user.id }}) is now {{= it.routingStatus.status }}",
-    //     data.eventBody,
-    //     defs
-    //   );
-
-    //   // Success?
-    //   if (routingMessage) _this.log.info(routingMessage);
-    //   else _this.log.warn("Template execution failed! No message returned.");
-    //   return;
-    // }
-
-    // // Conversation summary
-    // var conversationMatch = topic.match(
-    //   /v2\.users\.([0-9a-f\-]{36})\.conversationsummary/i
-    // );
-    // if (conversationMatch) {
-    //   // Add extra data to event
-    //   data.eventBody.user = getUser(conversationMatch[1]);
-
-    //   // Execute template
-    //   var conversationMessage = _this.templateService.executeTemplate(
-    //     "{{# def.now() }} - User {{= it.user.name }} ({{= it.user.id }}): \n" +
-    //       "calls: CC: {{= it.call.contactCenter.active }}/{{= it.call.contactCenter.acw }}, " +
-    //       "Enterprise: {{= it.call.enterprise.active }}/{{= it.call.enterprise.acw }}\n" +
-    //       "callbacks: CC: {{= it.callback.contactCenter.active }}/{{= it.callback.contactCenter.acw }}, " +
-    //       "Enterprise: {{= it.callback.enterprise.active }}/{{= it.callback.enterprise.acw }}\n" +
-    //       "emails: CC: {{= it.email.contactCenter.active }}/{{= it.email.contactCenter.acw }}, " +
-    //       "Enterprise: {{= it.email.enterprise.active }}/{{= it.email.enterprise.acw }}\n" +
-    //       "chats: CC: {{= it.chat.contactCenter.active }}/{{= it.chat.contactCenter.acw }}, " +
-    //       "Enterprise: {{= it.chat.enterprise.active }}/{{= it.chat.enterprise.acw }}",
-    //     data.eventBody,
-    //     defs
-    //   );
-
-    //   // Success?
-    //   if (conversationMessage) _this.log.info(conversationMessage);
-    //   else _this.log.warn("Template execution failed! No message returned.");
-    //   return;
-    // }
-
-    // // Only called when topic isn't matched
-    // _this.log.warn(`Unmatched notification topic: ${topic}`);
   } catch (err) {
     _this.log.error(`Error handling notification: ${err.message}`);
     _this.log.error(err);
@@ -227,7 +108,27 @@ function onNotification(topic, data) {
 }
 
 function conversationCallback(topic, data) {
-  _this.log.debug({ topic, data });
+  // TODO: URL NEEDS TO BE BASED ON CONFIG THAT SHOULD BE SET IN A .env FILE
+  axios
+    .post(
+      "https://notifications-dev.hivehq.co/v1/handler",
+      JSON.stringify({
+        type: "conversations",
+        typeId: data.eventBody.id,
+        message: data,
+      })
+    )
+    .then((response) => {
+      // do something here?
+      _this.log.info({ responseData: response.data });
+    })
+    .catch((err) => {
+      // We errored out...
+      console.log({
+        FUNCTION: "Integration::conversationCallback",
+        ERROR: err,
+      });
+    });
   return true;
 }
 
