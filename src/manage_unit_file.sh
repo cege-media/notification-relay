@@ -2,7 +2,7 @@ function generateUnitFile() {
         node=$(which node)
         cat << EOF
 [Unit]
-Description=forever/node daemon (persistence and logging)
+Description=notification-relay service
 After=network.target
 
 [Service]
@@ -18,27 +18,33 @@ WantedBy=default.target
 EOF
 }
 
+# set the table
+service=notification-relay
+unit_file=$service.service
+local_file=$(pwd)/$unit_file
+remote_file=/etc/systemd/system/$unit_file
+
 # stop service if it exists
-sudo systemctl stop notification-relay
+sudo systemctl stop $service
 
 # remove current generated files
-sudo rm /etc/systemd/system/notification-relay.service
-sudo rm notification-relay.service
+sudo rm $remote_file
+sudo rm $local_file
 
 # generate unit file
-generateUnitFile > notification-relay.service
+generateUnitFile > $local_file
 
 # change permissions
-sudo chmod 777 notification-relay.service
+sudo chmod 777 $local_file
 
 # create symlink
-sudo ln -s $(pwd)/notification-relay.service /etc/systemd/system/notification-relay.service
+sudo ln -s $local_file $remote_file
 
 # reload daemon
 sudo systemctl daemon-reload
 
 # start service
-sudo systemctl start notification-relay
+sudo systemctl start $service
 
 # show status
-systemctl status notification-relay.service
+systemctl status $unit_file
