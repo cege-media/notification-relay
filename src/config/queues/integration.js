@@ -111,7 +111,7 @@ function conversationCallback(topic, data) {
   // TODO: URL NEEDS TO BE BASED ON CONFIG THAT SHOULD BE SET IN A .env FILE
   axios
     .post(
-      "https://notifications-dev.hivehq.co/v1/handler",
+      "https://notifications.hivehq.co/v1/handler",
       JSON.stringify({
         type: "conversations",
         typeId: data.eventBody.id,
