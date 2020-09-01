@@ -120,7 +120,7 @@ function conversationCallback(topic, data) {
     )
     .then((response) => {
       // do something here?
-      _this.log.info({ responseData: response.data });
+      _this.log.info({ responseData: response.data, TIMESTAMP: Date.now() });
     })
     .catch((err) => {
       // We errored out...
