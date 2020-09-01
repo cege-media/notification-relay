@@ -5,5 +5,9 @@
   "subscriptions": {
     "v2.routing.queues.{id}.conversations": { "$ref": "#/queues" }
   },
-  "queues": ["b60868bf-5f66-4119-8def-2883f93448ce", "86e1f7bc-7c7b-47e5-a1a2-9269f75ce191"]
+  "queues": [
+    "b60868bf-5f66-4119-8def-2883f93448ce",
+    "86e1f7bc-7c7b-47e5-a1a2-9269f75ce191",
+    "8a458526-52fb-4de6-bc0a-2aa2440d6cf7"
+  ]
 }
