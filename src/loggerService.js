@@ -1,10 +1,10 @@
 /* prettier-ignore */
 const _ = require('lodash');
 const Winston = require("winston");
-const WinstonCloudwatch = require("winston-cloudwatch");
+// const WinstonCloudwatch = require("winston-cloudwatch");
 
-const awsAccessKeyId = "AKIA2TCQZFPOSFBUYXMO" || "test";
-const awsSecretKey = "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" || "test";
+const awsAccessKeyId = "test";
+const awsSecretKey = "test";
 
 function Logger(topic, level) {
   var self = this;
@@ -23,19 +23,19 @@ function Logger(topic, level) {
         json: false,
         colorize: true,
       }),
-      new WinstonCloudwatch({
-        // awsRegion: "us-east-1",
-        // awsOptions: {
-        //   logStreamName: "us-east-1",
-        // },
-        // logGroupName: "test_notification_relay",
-        // logStreamName: "test_notification_relay-dev",
-        logGroupName: "test_notification_relay",
-        logStreamName: "test_notification_relay-dev",
-        awsRegion: "us-east-1",
-        awsAccessKeyId,
-        awsSecretKey,
-      }),
+      // new WinstonCloudwatch({
+      //   // awsRegion: "us-east-1",
+      //   // awsOptions: {
+      //   //   logStreamName: "us-east-1",
+      //   // },
+      //   // logGroupName: "test_notification_relay",
+      //   // logStreamName: "test_notification_relay-dev",
+      //   logGroupName: "test_notification_relay",
+      //   logStreamName: "test_notification_relay-dev",
+      //   awsRegion: "us-east-1",
+      //   awsAccessKeyId,
+      //   awsSecretKey,
+      // }),
     ],
     // filters: [
     //   function (level, msg, meta) {
