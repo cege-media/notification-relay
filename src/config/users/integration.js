@@ -18,14 +18,14 @@ const topicPaths = [
     regex: /v2\.analytics\.users\.([0-9a-f\-]{36})\.aggregates/,
     path: "v2.analytics.users.{id}.aggregates",
     callback: userCallback,
-    endpoint: "https://notifications.hivehq.co/v1/user/aggregate",
+    endpoint: "https://notifications-dev.hivehq.co/v1/user/aggregate",
     type: "user_aggregates",
   },
   {
     regex: /v2\.users\.([0-9a-f\-]{36})\.activity/,
     path: "v2.users.{id}.activity",
     callback: userCallback,
-    endpoint: "https://notifications.hivehq.co/v1/user/activity",
+    endpoint: "https://notifications-dev.hivehq.co/v1/user/activity",
     type: "user_activity",
   },
 ];
