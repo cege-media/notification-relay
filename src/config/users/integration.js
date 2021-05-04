@@ -61,15 +61,15 @@ function Integration(serviceProvder) {
 
   // Subscribe to notifications via config object
   this.log.debug("subscribing notifications");
-  const subscriptionChannels = _this.defaultCache
-    .get("users")
-    .reduce((result, user) => {
-      const userId = user?.id;
-      const topics = topicPaths.reduce((topicResults, topic) => {
-        return [...topicResults, topic.path.replace(/{.*}/gi, userId)];
-      }, []);
-      return [...result, ...topics];
+  const subscriptionChannels = Object.keys(
+    _this.defaultCache.get("users")
+  ).reduce((result, user) => {
+    const userId = user?.id;
+    const topics = topicPaths.reduce((topicResults, topic) => {
+      return [...topicResults, topic.path.replace(/{.*}/gi, userId)];
     }, []);
+    return [...result, ...topics];
+  }, []);
   this.integration.subscribeNotifications(subscriptionChannels);
 
   this.log.debug(
