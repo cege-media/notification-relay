@@ -8,5 +8,5 @@
     "logLevel": "debug",
     "enableSdkDebugging": false
   },
-  "integrations": [{ "$ref": "./config/queues/config.json" }]
+  "integrations": [{ "$ref": "./config/queues/config.json" }, { "$ref": "./config/users/config.json" }]
 }

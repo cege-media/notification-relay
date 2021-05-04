@@ -1,0 +1,10 @@
+{
+  "name": "Integration - Queue Console",
+  "logTopic": "Queues",
+  "modulePath": "./config/users/integration.js",
+  "subscriptions": {
+    "v2.analytics.users.{id}.aggregates": {},
+    "v2.users.{id}.activity": {}
+  },
+  "users": []
+}
