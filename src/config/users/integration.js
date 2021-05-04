@@ -63,8 +63,7 @@ function Integration(serviceProvder) {
   this.log.debug("subscribing notifications");
   const subscriptionChannels = Object.keys(
     _this.defaultCache.get("users")
-  ).reduce((result, user) => {
-    const userId = user?.id;
+  ).reduce((result, userId) => {
     const topics = topicPaths.reduce((topicResults, topic) => {
       return [...topicResults, topic.path.replace(/{.*}/gi, userId)];
     }, []);
